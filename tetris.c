@@ -83,16 +83,10 @@ int main() {
     remover(&f, &removida);
     inserir(&f, p6);
 
-    printf("Peca removida: %s %d\n", removida.nome, removida.ID);
-    printf("Peca inserida: %s %d\n", p6.nome, p6.ID);
-
     mostrarFila(&f);
 
     remover(&f, &removida);
     inserir(&f, p7);
-
-    printf("Peca removida: %s %d\n", removida.nome, removida.ID);
-    printf("Peca inserida: %s %d\n", p7.nome, p7.ID);
 
     mostrarFila(&f);
 
