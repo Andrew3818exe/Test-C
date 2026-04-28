@@ -1,94 +1,136 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
-#define MAX 5
+#define MAX 5 // Tamanho da lista de peças que irá aparecer.
+#define TAMANHO 100 // Tamanho da lista de peças em espera.
 
-typedef struct {
+// Criação das structs:
+struct Peca{
     char nome[2];
     int ID;
-} Peca;
+};
 
-typedef struct {
-    Peca itens[MAX];
+struct ListaDePecas{
+    struct Peca itens[MAX];
     int inicio;
     int final;
     int total;
-} FilaDePecas;
+};
 
-void inicializarFila(FilaDePecas *f) {
-    f->inicio = 0;
-    f->final = 0;
-    f->total = 0;
+// Criação da base das peças de Tetris:
+struct Peca PecasBase[7] = {
+    {"O",0},{"I",0},{"T",0},{"L",0},{"J",0},{"S",0},{"Z",0}
+};
+
+// Lista de peças em espera:
+struct Peca ListaGlobal[TAMANHO];
+int topo = 0;
+
+// Identação dos IDs para as peças aleatórias:
+struct Peca ProximaPeca(){
+    struct Peca p = ListaGlobal[topo];
+    p.ID = topo + 1;
+    topo++;
+    return p;
 }
 
-int filaCheia(FilaDePecas *f) {
-    return f->total == MAX;
+// Checagem de valores
+int ListaCheia(struct ListaDePecas *l){ return l->total == MAX; }
+int ListaVazia(struct ListaDePecas *l){ return l->total == 0; }
+
+// Funções:
+void InicializarLista(struct ListaDePecas *l){
+    l->inicio = 0; l->final = 0; l->total = 0;
 }
 
-int filaVazia(FilaDePecas *f) {
-    return f->total == 0;
-}
-
-void inserir(FilaDePecas *f, Peca p) {
-    if(filaCheia(f)) {
-        printf("Fila cheia. Não é possível inserir mais peças.");
-        return;
+void GerarLista(){
+    for(int i = 0; i < TAMANHO; i++){
+        ListaGlobal[i] = PecasBase[i % 7];
     }
 
-    f->itens[f->final] = p;
-    f->final = (f->final + 1) % MAX;
-    f->total++;
-}
-
-void remover(FilaDePecas *f, Peca *p) {
-    if(filaVazia(f)) {
-        printf("Fila vazia. Não é possível remover mais peças.");
-        return;
+    for(int i = TAMANHO - 1; i > 0; i--){
+        int j = rand() % (i + 1);
+        struct Peca temp = ListaGlobal[i];
+        ListaGlobal[i] = ListaGlobal[j];
+        ListaGlobal[j] = temp;
     }
 
-    *p = f->itens[f->inicio];
-    f->inicio = (f->inicio + 1) % MAX;
-    f->total--;
+    topo = 0;
 }
 
-void mostrarFila(FilaDePecas *f) {
-    printf("Pecas: ");
-    for(int i = 0, idx = f->inicio; i < f->total; i++, idx = (idx + 1) % MAX) {
-        printf("[%s %d] ", f->itens[idx].nome, f->itens[idx].ID);
+void InserirPeca(struct ListaDePecas *l, struct Peca p){
+    if(ListaCheia(l)) return;
+    l->itens[l->final] = p;
+    l->final = (l->final + 1) % MAX;
+    l->total++;
+}
+
+void RemoverPeca(struct ListaDePecas *l, struct Peca *p){
+    if(ListaVazia(l)) return;
+    *p = l->itens[l->inicio];
+    l->inicio = (l->inicio + 1) % MAX;
+    l->total--;
+}
+
+void UtilizarPeca(struct ListaDePecas *l){
+    struct Peca p;
+    RemoverPeca(l, &p);
+    InserirPeca(l, ProximaPeca());
+}
+
+void MostrarLista(const struct ListaDePecas *l){
+    printf("\nPecas: ");
+    for(int i = 0, idx = l->inicio; i < l->total; i++){
+        printf("[%s %d] ", l->itens[idx].nome, l->itens[idx].ID);
+        idx = (idx + 1) % MAX;
     }
     printf("\n");
 }
 
-int main() {
+void ExibirMenu(){
+    printf("\n==============================\n");
+    printf("    Tetris Stack - Parte 1\n");
+    printf("==============================\n");
+    printf("1 - Ver suas pecas\n");
+    printf("2 - Utilizar uma peca\n");
+    printf("0 - Sair do jogo\n");
+    printf("------------------------------\n");
+    printf("Escolha uma opcao: ");
+}
 
-    FilaDePecas f;
-    inicializarFila(&f);
+int main(){
+    srand(time(NULL));
 
-    Peca p1 = {"O", 1};
-    Peca p2 = {"T", 2};
-    Peca p3 = {"I", 3};
-    Peca p4 = {"O", 4};
-    Peca p5 = {"S", 5};
-    Peca p6 = {"Z", 6};
-    Peca p7 = {"I", 7};
-    inserir(&f, p1);
-    inserir(&f, p2);
-    inserir(&f, p3);
-    inserir(&f, p4);
-    inserir(&f, p5);
+    struct ListaDePecas lista;
+    InicializarLista(&lista);
+    GerarLista();
 
-    mostrarFila(&f);
+    for(int i = 0; i < MAX; i++)
+        InserirPeca(&lista, ProximaPeca());
 
-    Peca removida;
-    remover(&f, &removida);
-    inserir(&f, p6);
+    int opcao;
 
-    mostrarFila(&f);
+    do{
+        ExibirMenu();
+        scanf("%d", &opcao);
 
-    remover(&f, &removida);
-    inserir(&f, p7);
+        switch(opcao){
+            case 1:
+                MostrarLista(&lista);
+                break;
+            case 2:
+                UtilizarPeca(&lista);
+                MostrarLista(&lista);
+                break;
+            case 0:
+                printf("\nEncerrando o jogo...\n");
+                break;
+            default:
+                printf("\nOpcao invalida.\n");
+        }
 
-    mostrarFila(&f);
+    } while(opcao != 0);
 
     return 0;
 }
