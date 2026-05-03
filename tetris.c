@@ -2,132 +2,132 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define MAX 5 // Tamanho da lista de peças que irá aparecer.
-#define TAMANHO 100 // Tamanho da lista de peças em espera.
+#define MAX 5 // List size that will appear.
+#define SIZE 100 // List size that's waiting.
 
-// Criação das structs:
-struct Peca{
-    char nome[2];
+// Structs creations:
+struct Piece{
+    char name[2];
     int ID;
 };
 
-struct ListaDePecas{
-    struct Peca itens[MAX];
-    int inicio;
+struct PiecesList{
+    struct Piece items[MAX];
+    int start;
     int final;
     int total;
 };
 
-// Criação da base das peças de Tetris:
-struct Peca PecasBase[7] = {
+// Tetris pieces base creation:
+struct Piece BasePieces[7] = {
     {"O",0},{"I",0},{"T",0},{"L",0},{"J",0},{"S",0},{"Z",0}
 };
 
-// Lista de peças em espera:
-struct Peca ListaGlobal[TAMANHO];
-int topo = 0;
+// Waiting pieces list:
+struct Piece GlobalList[SIZE];
+int top = 0;
 
-// Identação dos IDs para as peças aleatórias:
-struct Peca ProximaPeca(){
-    struct Peca p = ListaGlobal[topo];
-    p.ID = topo + 1;
-    topo++;
+// IDs identification for random pieces:
+struct Piece NextPiece(){
+    struct Piece p = GlobalPiece[top];
+    p.ID = top + 1;
+    top++;
     return p;
 }
 
-// Checagem de valores
-int ListaCheia(struct ListaDePecas *l){ return l->total == MAX; }
-int ListaVazia(struct ListaDePecas *l){ return l->total == 0; }
+// Value checking:
+int FullList(struct PiecesList *l){ return l->total == MAX; }
+int EmptyList(struct PiecesList *l){ return l->total == 0; }
 
-// Funções:
-void InicializarLista(struct ListaDePecas *l){
-    l->inicio = 0; l->final = 0; l->total = 0;
+// Functions:
+void StartList(struct PiecesList *l){
+    l->start = 0; l->final = 0; l->total = 0;
 }
 
-void GerarLista(){
-    for(int i = 0; i < TAMANHO; i++){
-        ListaGlobal[i] = PecasBase[i % 7];
+void CreateList(){
+    for(int i = 0; i < SIZE; i++){
+        GlobalList[i] = BasePieces[i % 7];
     }
 
     for(int i = TAMANHO - 1; i > 0; i--){
         int j = rand() % (i + 1);
-        struct Peca temp = ListaGlobal[i];
-        ListaGlobal[i] = ListaGlobal[j];
-        ListaGlobal[j] = temp;
+        struct Pieces temp = GlobalList[i];
+        GlobalList[i] = GlobalList[j];
+        GlobalList[j] = temp;
     }
 
-    topo = 0;
+    top = 0;
 }
 
-void InserirPeca(struct ListaDePecas *l, struct Peca p){
-    if(ListaCheia(l)) return;
-    l->itens[l->final] = p;
+void InsertPiece(struct PiecesList *l, struct Piece p){
+    if(FullList(l)) return;
+    l->items[l->final] = p;
     l->final = (l->final + 1) % MAX;
     l->total++;
 }
 
-void RemoverPeca(struct ListaDePecas *l, struct Peca *p){
-    if(ListaVazia(l)) return;
-    *p = l->itens[l->inicio];
-    l->inicio = (l->inicio + 1) % MAX;
+void RemovePiece(struct PiecesList *l, struct Piece *p){
+    if(EmptyList(l)) return;
+    *p = l->items[l->start];
+    l->start = (l->start + 1) % MAX;
     l->total--;
 }
 
-void UtilizarPeca(struct ListaDePecas *l){
-    struct Peca p;
-    RemoverPeca(l, &p);
-    InserirPeca(l, ProximaPeca());
+void UsePiece(struct PiecesList *l){
+    struct Piece p;
+    RemovePiece(l, &p);
+    InsertPiece(l, NextPiece());
 }
 
-void MostrarLista(const struct ListaDePecas *l){
-    printf("\nPecas: ");
-    for(int i = 0, idx = l->inicio; i < l->total; i++){
-        printf("[%s %d] ", l->itens[idx].nome, l->itens[idx].ID);
+void ShowList(const struct PiecesList *l){
+    printf("\nPieces: ");
+    for(int i = 0, idx = l->start; i < l->total; i++){
+        printf("[%s %d] ", l->items[idx].name, l->items[idx].ID);
         idx = (idx + 1) % MAX;
     }
     printf("\n");
 }
 
-void ExibirMenu(){
+void ShowMenu(){
     printf("\n==============================\n");
-    printf("    Tetris Stack - Parte 1\n");
+    printf("    Tetris Stack - Part 1\n");
     printf("==============================\n");
-    printf("1 - Ver suas pecas\n");
-    printf("2 - Utilizar uma peca\n");
-    printf("0 - Sair do jogo\n");
+    printf("1 - See your pieces\n");
+    printf("2 - Use a piece\n");
+    printf("0 - Exit game\n");
     printf("------------------------------\n");
-    printf("Escolha uma opcao: ");
+    printf("Choose an option: ");
 }
 
 int main(){
     srand(time(NULL));
 
-    struct ListaDePecas lista;
-    InicializarLista(&lista);
-    GerarLista();
+    struct PiecesList list;
+    StartList(&list);
+    CreateList();
 
     for(int i = 0; i < MAX; i++)
-        InserirPeca(&lista, ProximaPeca());
+        InsertPiece(&list, NextPiece());
 
-    int opcao;
+    int option;
 
     do{
-        ExibirMenu();
-        scanf("%d", &opcao);
+        ShowMenu();
+        scanf("%d", &option);
 
-        switch(opcao){
+        switch(option){
             case 1:
-                MostrarLista(&lista);
+                ShowList(&list);
                 break;
             case 2:
-                UtilizarPeca(&lista);
-                MostrarLista(&lista);
+                UsePiece(&list);
+                ShowList(&list);
                 break;
             case 0:
-                printf("\nEncerrando o jogo...\n");
+                printf("\nExiting Game...\n");
                 break;
             default:
-                printf("\nOpcao invalida.\n");
+                printf("\nInvalid option.\n");
         }
 
     } while(opcao != 0);
