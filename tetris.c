@@ -29,7 +29,7 @@ int top = 0;
 
 // IDs identification for random pieces:
 struct Piece NextPiece(){
-    struct Piece p = GlobalPiece[top];
+    struct Piece p = GlobalList [top];
     p.ID = top + 1;
     top++;
     return p;
@@ -49,9 +49,9 @@ void CreateList(){
         GlobalList[i] = BasePieces[i % 7];
     }
 
-    for(int i = TAMANHO - 1; i > 0; i--){
+    for(int i = SIZE - 1; i > 0; i--){
         int j = rand() % (i + 1);
-        struct Pieces temp = GlobalList[i];
+        struct Piece temp = GlobalList[i];
         GlobalList[i] = GlobalList[j];
         GlobalList[j] = temp;
     }
@@ -130,7 +130,7 @@ int main(){
                 printf("\nInvalid option.\n");
         }
 
-    } while(opcao != 0);
+    } while(option != 0);
 
     return 0;
 }
