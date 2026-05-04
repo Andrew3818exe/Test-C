@@ -6,7 +6,7 @@
 #define SIZE 100 // List size that's waiting.
 
 // Structs creations:
-typedef struct{
+typedef struct {
     char name[2];
     int ID;
 } Piece;
@@ -28,7 +28,7 @@ Piece GlobalList[SIZE];
 int top = 0;
 
 // IDs identification for random pieces:
-Piece NextPiece(){
+Piece NextPiece() {
     Piece p = GlobalList [top];
     p.ID = top + 1;
     top++;
@@ -36,24 +36,24 @@ Piece NextPiece(){
 }
 
 // Value checking:
-int FullList(PiecesList *l){
+int FullList(PiecesList *l) {
     return l->total == MAX;
 }
-int EmptyList(PiecesList *l){
+int EmptyList(PiecesList *l) {
     return l->total == 0;
 }
 
 // Functions:
-void StartList(PiecesList *l){
+void StartList(PiecesList *l) {
     l->start = 0; l->final = 0; l->total = 0;
 }
 
-void CreateList(){
-    for(int i = 0; i < SIZE; i++){
+void CreateList() {
+    for(int i = 0; i < SIZE; i++) {
         GlobalList[i] = BasePieces[i % 7];
     }
 
-    for(int i = SIZE - 1; i > 0; i--){
+    for(int i = SIZE - 1; i > 0; i--) {
         int j = rand() % (i + 1);
         Piece temp = GlobalList[i];
         GlobalList[i] = GlobalList[j];
@@ -63,36 +63,36 @@ void CreateList(){
     top = 0;
 }
 
-void InsertPiece(PiecesList *l, Piece p){
+void InsertPiece(PiecesList *l, Piece p) {
     if(FullList(l)) return;
     l->items[l->final] = p;
     l->final = (l->final + 1) % MAX;
     l->total++;
 }
 
-void RemovePiece(PiecesList *l, Piece *p){
+void RemovePiece(PiecesList *l, Piece *p) {
     if(EmptyList(l)) return;
     *p = l->items[l->start];
     l->start = (l->start + 1) % MAX;
     l->total--;
 }
 
-void UsePiece(PiecesList *l){
+void UsePiece(PiecesList *l) {
     Piece p;
     RemovePiece(l, &p);
     InsertPiece(l, NextPiece());
 }
 
-void ShowList(const PiecesList *l){
+void ShowList(const PiecesList *l) {
     printf("\nPieces: ");
-    for(int i = 0, idx = l->start; i < l->total; i++){
+    for(int i = 0, idx = l->start; i < l->total; i++) {
         printf("[%s %d] ", l->items[idx].name, l->items[idx].ID);
         idx = (idx + 1) % MAX;
     }
     printf("\n");
 }
 
-void ShowMenu(){
+void ShowMenu() {
     printf("\n==============================\n");
     printf("    Tetris Stack - Part 1\n");
     printf("==============================\n");
@@ -103,23 +103,23 @@ void ShowMenu(){
     printf("Choose an option: ");
 }
 
-int main(){
+int main() {
     srand(time(NULL));
 
     PiecesList list;
     StartList(&list);
     CreateList();
 
-    for(int i = 0; i < MAX; i++)
+    for(int i = 0; i < MAX; i++){
         InsertPiece(&list, NextPiece());
-
+    }
     int option;
 
-    do{
+    do {
         ShowMenu();
         scanf("%d", &option);
 
-        switch(option){
+        switch(option) {
             case 1:
                 ShowList(&list);
                 break;
