@@ -6,41 +6,41 @@
 #define SIZE 100 // List size that's waiting.
 
 // Structs creations:
-struct Piece{
+typedef struct{
     char name[2];
     int ID;
-};
+} Piece;
 
-struct PiecesList{
-    struct Piece items[MAX];
+typedef struct {
+    Piece items[MAX];
     int start;
     int final;
     int total;
-};
+} PiecesList;
 
 // Tetris pieces base creation:
-struct Piece BasePieces[7] = {
+Piece BasePieces[7] = {
     {"O",0},{"I",0},{"T",0},{"L",0},{"J",0},{"S",0},{"Z",0}
 };
 
 // Waiting pieces list:
-struct Piece GlobalList[SIZE];
+Piece GlobalList[SIZE];
 int top = 0;
 
 // IDs identification for random pieces:
-struct Piece NextPiece(){
-    struct Piece p = GlobalList [top];
+Piece NextPiece(){
+    Piece p = GlobalList [top];
     p.ID = top + 1;
     top++;
     return p;
 }
 
 // Value checking:
-int FullList(struct PiecesList *l){ return l->total == MAX; }
-int EmptyList(struct PiecesList *l){ return l->total == 0; }
+int FullList(PiecesList *l){ return l->total == MAX; }
+int EmptyList(PiecesList *l){ return l->total == 0; }
 
 // Functions:
-void StartList(struct PiecesList *l){
+void StartList(PiecesList *l){
     l->start = 0; l->final = 0; l->total = 0;
 }
 
@@ -51,7 +51,7 @@ void CreateList(){
 
     for(int i = SIZE - 1; i > 0; i--){
         int j = rand() % (i + 1);
-        struct Piece temp = GlobalList[i];
+        Piece temp = GlobalList[i];
         GlobalList[i] = GlobalList[j];
         GlobalList[j] = temp;
     }
@@ -59,27 +59,27 @@ void CreateList(){
     top = 0;
 }
 
-void InsertPiece(struct PiecesList *l, struct Piece p){
+void InsertPiece(PiecesList *l, Piece p){
     if(FullList(l)) return;
     l->items[l->final] = p;
     l->final = (l->final + 1) % MAX;
     l->total++;
 }
 
-void RemovePiece(struct PiecesList *l, struct Piece *p){
+void RemovePiece(PiecesList *l, Piece *p){
     if(EmptyList(l)) return;
     *p = l->items[l->start];
     l->start = (l->start + 1) % MAX;
     l->total--;
 }
 
-void UsePiece(struct PiecesList *l){
-    struct Piece p;
+void UsePiece(PiecesList *l){
+    Piece p;
     RemovePiece(l, &p);
     InsertPiece(l, NextPiece());
 }
 
-void ShowList(const struct PiecesList *l){
+void ShowList(const PiecesList *l){
     printf("\nPieces: ");
     for(int i = 0, idx = l->start; i < l->total; i++){
         printf("[%s %d] ", l->items[idx].name, l->items[idx].ID);
@@ -102,7 +102,7 @@ void ShowMenu(){
 int main(){
     srand(time(NULL));
 
-    struct PiecesList list;
+    PiecesList list;
     StartList(&list);
     CreateList();
 
