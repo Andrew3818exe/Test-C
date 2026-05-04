@@ -36,8 +36,12 @@ Piece NextPiece(){
 }
 
 // Value checking:
-int FullList(PiecesList *l){ return l->total == MAX; }
-int EmptyList(PiecesList *l){ return l->total == 0; }
+int FullList(PiecesList *l){
+    return l->total == MAX;
+}
+int EmptyList(PiecesList *l){
+    return l->total == 0;
+}
 
 // Functions:
 void StartList(PiecesList *l){
