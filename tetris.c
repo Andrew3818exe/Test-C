@@ -64,14 +64,18 @@ void CreateList() {
 }
 
 void InsertPiece(PiecesList *l, Piece p) {
-    if(FullList(l)) return;
+    if(FullList(l)) {
+        return;
+    }
     l->items[l->final] = p;
     l->final = (l->final + 1) % MAX;
     l->total++;
 }
 
 void RemovePiece(PiecesList *l, Piece *p) {
-    if(EmptyList(l)) return;
+    if(EmptyList(l)) {
+        return;
+    }
     *p = l->items[l->start];
     l->start = (l->start + 1) % MAX;
     l->total--;
