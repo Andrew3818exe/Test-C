@@ -58,11 +58,11 @@ void StartList(PiecesList *p) {
 }
 
 void CreateList() {
-    for(int i = 0; i < SIZE; i++){
+    for(int i = 0; i < SIZE; i++) {
         GlobalList[i] = BasePieces[i % 7];
     }
 
-    for(int i = SIZE - 1; i > 0; i--){
+    for(int i = SIZE - 1; i > 0; i--) {
         int j = rand() % (i + 1);
         Piece temp = GlobalList[i];
         GlobalList[i] = GlobalList[j];
@@ -73,14 +73,18 @@ void CreateList() {
 }
 
 void InsertPiece(PiecesList *l, Piece p) {
-    if(FullList(l)) return;
+    if(FullList(l)) {
+        return;
+    }
     l->items[l->final] = p;
     l->final = (l->final + 1) % MAX;
     l->total++;
 }
 
 void RemovePiece(PiecesList *l, Piece *p) {
-    if(EmptyList(l)) return;
+    if(EmptyList(l)) {
+        return;
+    }
     *p = l->items[l->start];
     l->start = (l->start + 1) % MAX;
     l->total--;
@@ -94,7 +98,7 @@ void UsePiece(PiecesList *l) {
 
 void ShowList(const PiecesList *l) {
     printf("\nPieces: ");
-    for(int i = 0, idx = l->start; i < l->total; i++){
+    for(int i = 0, idx = l->start; i < l->total; i++) {
         printf("[%s %d] ", l->items[idx].name, l->items[idx].ID);
         idx = (idx + 1) % MAX;
     }
@@ -168,7 +172,7 @@ int HandleMenu(PiecesList *list, PushPiecesList *hold) {
     int option;
     scanf("%d", &option);
 
-    switch(option){
+    switch(option) {
             case 1: // Play a piece.
                 UsePiece(list);
                 ShowList(list);
@@ -207,7 +211,7 @@ int main () {
     for(int i = 0; i < MAX; i++) {
         InsertPiece(&list, NextPiece());
     }
-    do{
+    do {
         ShowMenu();
         option = HandleMenu(&list, &hold);
     } while(option != 0);
