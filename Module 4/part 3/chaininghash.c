@@ -78,8 +78,8 @@ int main() {
 
     insert("Ana");
     insert("Bruno");
-    insert("Carlos");
-    insert("Amanda"); // Can collide with "Ana"
+    insert("Carlos"); // Can collide with "Ana"
+    insert("Amanda"); // Can collide with "Bruno"
 
     printf("Searching 'Bruno': %s\n", search("Bruno") ? "Found" : "Not found");
 
