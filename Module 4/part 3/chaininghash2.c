@@ -10,7 +10,7 @@
 // Struct that represents an entrance to the table:
 typedef struct {
     char name[50];
-    int occupied; // 0 = free, 1 = occupied, 2 = removed
+    int occupied; // 0 = free, 1 = occupied, -1 = removed
 } Entrance;
 
 Entrance hashTable[TABLE_SIZE];
