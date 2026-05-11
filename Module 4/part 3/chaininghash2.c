@@ -55,9 +55,9 @@ int search(const char* name) {
         if(hashTable[pos].occupied == 1 && strcmp(hashTable[pos].name, name) == 0) {
             return pos; // Finds the string
         }
-
-        return -1; // Not found
     }
+    
+    return -1; // Not found
 }
 
 // Function that removes the string and makes the position as removed (-1):
